@@ -2,7 +2,7 @@
 ```
 cd /home/thor
 ```
-# Create YAML file
+# Create YAML file 
 ```
 vi pod-httpd.yaml
 ```
