@@ -82,4 +82,4 @@ kubectl get all -n dev
 **Author:** Nautilus DevOps Team
 **Date:** October 2025
 
-
+ 
