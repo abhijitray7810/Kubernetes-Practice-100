@@ -1,4 +1,4 @@
-# Kubernetes Namespace and Pod Deployment
+ # Kubernetes Namespace and Pod Deployment
 
 ## 📘 Task Overview
 The Nautilus DevOps team planned to deploy microservices on a Kubernetes cluster.  
