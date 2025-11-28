@@ -6,7 +6,7 @@ As part of the setup, a dedicated namespace and pod need to be created using the
 
 ---
 
-## ⚙️ Task Details
+ ## ⚙️ Task Details
 
 - **Namespace Name:** `dev`  
 - **Pod Name:** `dev-nginx-pod`  
