@@ -1,0 +1,145 @@
+---
+# 1. ConfigMap for php.ini
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-config
+data:
+  php.ini: |
+    variables_order = "EGPCS"
+
+---
+# 4. Secrets for MySQL credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secrets
+type: Opaque
+stringData:
+  MYSQL_ROOT_PASSWORD: "rootpass123"
+  MYSQL_DATABASE: "wpdb"
+  MYSQL_USER: "wpuser"
+  MYSQL_PASSWORD: "wppass123"
+  MYSQL_HOST: "mysql-service"
+
+---
+# 2. Deployment for LAMP stack
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lamp-wp
+  labels:
+    app: lamp-wp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lamp-wp
+  template:
+    metadata:
+      labels:
+        app: lamp-wp
+    spec:
+      containers:
+      # First container - Apache PHP
+      - name: httpd-php-container
+        image: webdevops/php-apache:alpine-3-php7
+        ports:
+        - containerPort: 80
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_PASSWORD
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_HOST
+        volumeMounts:
+        - name: php-config-volume
+          mountPath: /opt/docker/etc/php/php.ini
+          subPath: php.ini
+      
+      # Second container - MySQL
+      - name: mysql-container
+        image: mysql:5.6
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_PASSWORD
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: MYSQL_HOST
+      
+      volumes:
+      - name: php-config-volume
+        configMap:
+          name: php-config
+
+---
+# 6. NodePort Service for web application
+apiVersion: v1
+kind: Service
+metadata:
+  name: lamp-service
+spec:
+  type: NodePort
+  selector:
+    app: lamp-wp
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30008
+    protocol: TCP
+
+---
+# 7. Service for MySQL
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: lamp-wp
+  ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP
