@@ -1,0 +1,66 @@
+---
+# PersistentVolume Definition
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-xfusion
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 4Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/security
+
+---
+# PersistentVolumeClaim Definition
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-xfusion
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+
+---
+# Pod Definition
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-xfusion
+  labels:
+    app: xfusion-web
+spec:
+  containers:
+  - name: container-xfusion
+    image: httpd:latest
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: storage
+      mountPath: /usr/local/apache2/htdocs
+  volumes:
+  - name: storage
+    persistentVolumeClaim:
+      claimName: pvc-xfusion
+
+---
+# NodePort Service Definition
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-xfusion
+spec:
+  type: NodePort
+  selector:
+    app: xfusion-web
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30008
+    protocol: TCP
