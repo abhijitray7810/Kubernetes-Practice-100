@@ -37,3 +37,94 @@ Example secret creation:
 ```bash
 kubectl create secret generic mysql-root-pass \
   --from-literal=password=rootpass
+````
+
+---
+
+## 🚀 Deployment Steps
+
+1. Navigate to the directory:
+
+```bash
+cd /home/thor
+```
+
+2. Apply the Kubernetes template:
+
+```bash
+kubectl apply -f mysql_deployment.yml
+```
+
+3. Verify resources:
+
+```bash
+kubectl get pv
+kubectl get pvc
+kubectl get pods
+kubectl get svc
+```
+
+---
+
+## 🔍 Access MySQL
+
+Once the pod is running, MySQL will be accessible via:
+
+* **NodePort:** `30011`
+* **Port:** `3306`
+
+Use the node’s IP address:
+
+```bash
+mysql -h <NODE_IP> -P 30011 -u <user> -p
+```
+
+---
+
+## 🛠 Fixes Applied
+
+The following issues were corrected:
+
+* Incorrect `apiVersion` for Kubernetes resources
+* Invalid resource kinds and casing
+* YAML indentation and syntax errors
+* Incorrect storage units (`MB` → `Mi`)
+* Broken volume and PVC references
+* Service selector mismatch
+* Deployment selector misconfiguration
+* Secret reference indentation errors
+
+---
+
+## 📌 Notes
+
+* No components were removed during fixes.
+* MySQL data persists even after pod restarts due to PV/PVC usage.
+* Deployment uses `Recreate` strategy to avoid data corruption.
+
+---
+
+## ✅ Status
+
+✔ Template validated
+✔ Successfully applied using `kubectl apply`
+✔ MySQL pod running and accessible
+
+---
+
+## 📄 Author
+
+**Abhijit Ray**
+DevOps Engineer | Kubernetes | Docker | CI/CD | Terraform
+
+```
+
+---
+
+If you want, I can also:
+- Add **architecture diagram**
+- Convert this into a **GitHub-ready repo structure**
+- Customize it for **LinkedIn post / DevOps lab submission**
+
+Just tell me 👍
+```
