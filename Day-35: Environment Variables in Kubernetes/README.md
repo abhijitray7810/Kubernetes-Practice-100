@@ -3,7 +3,7 @@
 This repository contains a Kubernetes Pod configuration that demonstrates how to use the Downward API to expose Pod and Node information as environment variables within containers.
 
 ## Overview
-
+ 
 The configuration creates a Pod named `envars` that runs an `httpd` container. The container uses environment variables populated by Kubernetes metadata through the Downward API's `fieldRef` mechanism.
 
 ## Prerequisites
